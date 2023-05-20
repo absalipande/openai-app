@@ -31,6 +31,9 @@ Frontend:
 - npm i
 - npm run dev
 
+Future update:
+- Implementing Upstash for rate-limit
+
 
 ## Acknowledgments
 
