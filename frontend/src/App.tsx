@@ -1,8 +1,9 @@
 import './index.css';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ChatMessage from './components/ChatMessage';
 import { sendMessage } from './api/api';
 import ErrorMessage from './components/ErrorMessage';
+import MessageInput from './components/MessageInput';
 
 const App = () => {
   const [messages, setMessages] = useState<string[]>([]);
@@ -10,7 +11,7 @@ const App = () => {
   const [error, setError] = useState<string>('');
   const messagesRef = useRef<HTMLDivElement>(null);
 
-  const sendMessageHandler = async () => {
+  const sendMessageHandler = useCallback(async () => {
     if (!input.trim()) return;
 
     setMessages([...messages, input]);
@@ -24,13 +25,24 @@ const App = () => {
       console.error(error);
       setError('Failed to send message. Please try again.');
     }
-  };
+  }, [input, messages]);
 
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
-    e.target.style.height = 'auto';
-    e.target.style.height = `${e.target.scrollHeight}px`;
-  };
+  const handleInput = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setInput(e.target.value);
+    },
+    []
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessageHandler();
+      }
+    },
+    [sendMessageHandler]
+  );
 
   useEffect(() => {
     if (messagesRef.current && messagesRef.current.lastChild) {
@@ -56,17 +68,11 @@ const App = () => {
 
       <div className='fixed bottom-0 left-0 w-full'>
         <div className='flex items-center justify-center py-4 px-2 bg-gray-800 w-11/12 mx-auto'>
-          <textarea
+          <MessageInput
             value={input}
             placeholder='Send a message.'
             onChange={handleInput}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessageHandler();
-              }
-            }}
-            className='w-full sm:w-3/6 px-4 py-2 border border-gray-800 rounded-md bg-gray-700 text-white resize-none overflow-hidden'
+            onKeyDown={handleKeyDown}
           />
         </div>
         <ErrorMessage error={error} />
