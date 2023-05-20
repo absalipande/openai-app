@@ -6,6 +6,7 @@ import { sendMessage } from './api/api';
 const App = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [input, setInput] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const messagesRef = useRef<HTMLDivElement>(null);
 
   const sendMessageHandler = async () => {
@@ -13,12 +14,14 @@ const App = () => {
 
     setMessages([...messages, input]);
     setInput('');
+    setError('');
 
     try {
       const response = await sendMessage(input);
       setMessages((prevMessages) => [...prevMessages, response]);
     } catch (error) {
       console.error(error);
+      setError('Failed to send message. Please try again.');
     }
   };
 
@@ -39,7 +42,7 @@ const App = () => {
   return (
     <div className='flex flex-col justify-between min-h-screen bg-gray-800'>
       <div className='flex flex-col mt-10 mx-4 md:mx-auto md:max-w-4xl mb-20'>
-        <div ref={messagesRef} className='overflow-y-auto'>
+        <div ref={messagesRef} className='overflow-y-auto mb-4'>
           {messages.map((message, index) => (
             <ChatMessage
               key={index}
@@ -65,6 +68,7 @@ const App = () => {
             className='w-full sm:w-3/6 px-4 py-2 border border-gray-800 rounded-md bg-gray-700 text-white resize-none overflow-hidden'
           />
         </div>
+        {error && <p className='text-red-500'>{error}</p>}
       </div>
     </div>
   );
