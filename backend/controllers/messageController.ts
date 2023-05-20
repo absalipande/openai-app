@@ -9,6 +9,7 @@ export async function handleMessage(
 
   try {
     const response = await generateChatResponse(message);
+    res.json({ response });
   } catch (error) {
     console.error(error);
     res
