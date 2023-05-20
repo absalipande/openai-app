@@ -2,6 +2,7 @@ import './index.css';
 import { useState, useEffect, useRef } from 'react';
 import ChatMessage from './components/ChatMessage';
 import { sendMessage } from './api/api';
+import ErrorMessage from './components/ErrorMessage';
 
 const App = () => {
   const [messages, setMessages] = useState<string[]>([]);
@@ -68,7 +69,7 @@ const App = () => {
             className='w-full sm:w-3/6 px-4 py-2 border border-gray-800 rounded-md bg-gray-700 text-white resize-none overflow-hidden'
           />
         </div>
-        {error && <p className='text-red-500'>{error}</p>}
+        <ErrorMessage error={error} />
       </div>
     </div>
   );
