@@ -1,6 +1,6 @@
 import './index.css';
 import { useState, useEffect, useRef } from 'react';
-import TypingEffect from './components/TypingEffect';
+import ChatMessage from './components/ChatMessage';
 
 const App = () => {
   const [messages, setMessages] = useState<string[]>([]);
@@ -47,35 +47,20 @@ const App = () => {
     }
   }, [messages]);
 
-  const userImageUrl =
-    'https://chat.openai.com/_next/image?url=https%3A%2F%2Fs.gravatar.com%2Favatar%2Fb276205eea6967af3036202c2c32acfd%3Fs%3D480%26r%3Dpg%26d%3Dhttps%253A%252F%252Fcdn.auth0.com%252Favatars%252Fse.png&w=48&q=75';
-  const aiImageUrl = '/openai-logo.png';
+  // const userImageUrl =
+  //   'https://chat.openai.com/_next/image?url=https%3A%2F%2Fs.gravatar.com%2Favatar%2Fb276205eea6967af3036202c2c32acfd%3Fs%3D480%26r%3Dpg%26d%3Dhttps%253A%252F%252Fcdn.auth0.com%252Favatars%252Fse.png&w=48&q=75';
+  // const aiImageUrl = '/openai-logo.png';
 
   return (
     <div className='flex flex-col justify-between min-h-screen bg-gray-800'>
       <div className='flex flex-col mt-10 mx-4 md:mx-auto md:max-w-4xl mb-20'>
         <div ref={messagesRef} className='overflow-y-auto'>
           {messages.map((message, index) => (
-            <div
+            <ChatMessage
               key={index}
-              ref={index === messages.length - 1 ? messagesRef : null}
-              className='flex items-start mb-6'
-            >
-              <img
-                width={41}
-                height={41}
-                className='rounded-full mr-2'
-                src={index % 2 === 0 ? userImageUrl : aiImageUrl}
-                alt={index % 2 === 0 ? 'User' : 'AI'}
-              />
-              <div
-                className={`text-white py-2 px-4 rounded-md ${
-                  index % 2 === 0 ? 'bg-user' : 'bg-AI'
-                }`}
-              >
-                {index % 2 === 1 ? <TypingEffect text={message} /> : message}
-              </div>
-            </div>
+              message={message}
+              sender={index % 2 === 0 ? 'User' : 'AI'}
+            />
           ))}
         </div>
       </div>
